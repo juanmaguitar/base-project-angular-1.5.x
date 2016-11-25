@@ -6,7 +6,7 @@ angular.module('myApp', ['ngRoute'])
         templateUrl: 'views/home.html',
         controller: 'HomeCtrl'
       })
-      .when('/results', {
+      .when('/search', {
         templateUrl: 'views/results.html',
         controller: 'ResultsCtrl'
       })
@@ -22,25 +22,28 @@ angular.module('myApp', ['ngRoute'])
 			e.preventDefault()
 
 			DataService.getRecipes( $scope.querySearch )
-				.then( function(response) {
-					$rootScope.recipes = response.data;
+				.then( function(recipes) {
+					$rootScope.recipes = recipes;
 				})
 
-			$location.path("/results")
+			$location.path("/search")
 		}
 
 	})
-	.controller('HomeCtrl', function($scope) {
+	.controller('HomeCtrl', function($scope, $rootScope) {
+		$rootScope.section = "home"
 		$scope.title = "HOME"
 	})
 	.controller('ResultsCtrl', function($scope, $rootScope) {
-		$scope.title = "RESULTS RECIPES"
+		$rootScope.section = "search"
+		$scope.title = "SEARCH"
 	})
 	.factory("DataService", function( $http ) {
 
 			function getRecipes( query ) {
-				url = 'https://powerful-inlet-75906.herokuapp.com/recipe?q=' + query;
+				url = 'https://powerful-inlet-75906.herokuapp.com/edamam/recipes?q=' + query;
 				return $http.get( url )
+									.then(d => d.data)
 			}
 
 			return {
